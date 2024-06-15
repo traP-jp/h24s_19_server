@@ -3,10 +3,7 @@ package main
 import (
 	"h24s_19/internal/pkg/config"
 	"net/http"
-<<<<<<< HEAD
 	"fmt"
-=======
->>>>>>> 4992eb00431ca8b98f1a6e746493bcfdaac40be5
 
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
@@ -14,15 +11,9 @@ import (
 )
 
 type Room struct {
-<<<<<<< HEAD
 	RoomId   string `db:"room_id"`
 	RoomName string `db:"room_name"`
 	IsPublic bool   `db:"is_public"`
-=======
-	RoomId string `db:"room_id"`
-	RoomName string `db:"room_name"`
-	IsPublic bool `db:"is_public"`
->>>>>>> 4992eb00431ca8b98f1a6e746493bcfdaac40be5
 }
 
 type RoomRequest struct {
