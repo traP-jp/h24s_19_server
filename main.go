@@ -1,20 +1,26 @@
 package main
 
 import (
-	"net/http"
 	"h24s_19/internal/pkg/config"
-	
+	"net/http"
+	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
 )
 
 type Room struct {
-	roomId string `db:"room_id"`
-	roomName string `db:"room_name"`
-	isPublic bool `db:"is_public"`
+	RoomId   string `db:"room_id"`
+	RoomName string `db:"room_name"`
+	IsPublic bool   `db:"is_public"`
 }
 
+type RoomRequest struct {
+	RoomName string `json:"room_name"`
+	IsPublic bool   `json:"is_public"`
+	Password string `json:"password"`
+}
 
 func main() {
 	// Echoの新しいインスタンスを作成
@@ -31,6 +37,7 @@ func main() {
 	if err != nil {
 		e.Logger.Fatal(err)
 	}
+
 	e.GET("/api/rooms", func(c echo.Context) error {
 		var rooms []Room
 		err := db.Select(&rooms, "SELECT * FROM rooms")
@@ -38,6 +45,32 @@ func main() {
 			return err
 		}
 		return c.JSON(http.StatusOK, rooms)
+	})
+
+	e.POST("/api/room", func(c echo.Context) error {
+		data := &RoomRequest{}
+		if err := c.Bind(data); err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("%+v", err))
+		}
+		roomId, err := uuid.NewUUID()
+		if err != nil {
+			return err
+		}
+		_, err = db.Exec(
+			"INSERT INTO rooms (room_id, room_name, is_public) VALUES (?, ?, ?)",
+			roomId.String(),
+			data.RoomName,
+			data.IsPublic,
+		)
+		if err != nil {
+			return err
+		}
+		room := Room{
+			RoomId:   roomId.String(),
+			RoomName: data.RoomName,
+			IsPublic: data.IsPublic,
+		}
+		return c.JSON(http.StatusOK, room)
 	})
 
 	defer db.Close()
