@@ -1,9 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"h24s_19/internal/pkg/config"
 	"net/http"
-	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
@@ -11,9 +11,9 @@ import (
 )
 
 type Room struct {
-	RoomId   string `db:"room_id"`
-	RoomName string `db:"room_name"`
-	IsPublic bool   `db:"is_public"`
+	RoomId   uuid.UUID `db:"room_id"`
+	RoomName string    `db:"room_name"`
+	IsPublic bool      `db:"is_public"`
 }
 
 type RoomRequest struct {
@@ -38,6 +38,7 @@ func main() {
 		e.Logger.Fatal(err)
 	}
 
+	// 部屋一覧取得
 	e.GET("/api/rooms", func(c echo.Context) error {
 		var rooms []Room
 		err := db.Select(&rooms, "SELECT * FROM rooms")
@@ -48,6 +49,7 @@ func main() {
 		return c.JSON(http.StatusOK, rooms)
 	})
 
+	// 部屋作成
 	e.POST("/api/room", func(c echo.Context) error {
 		data := &RoomRequest{}
 		if err := c.Bind(data); err != nil {
@@ -59,7 +61,7 @@ func main() {
 		}
 		_, err = db.Exec(
 			"INSERT INTO rooms (room_id, room_name, is_public) VALUES (?, ?, ?)",
-			roomId.String(),
+			roomId,
 			data.RoomName,
 			data.IsPublic,
 		)
@@ -67,7 +69,7 @@ func main() {
 			return err
 		}
 		room := Room{
-			RoomId:   roomId.String(),
+			RoomId:   roomId,
 			RoomName: data.RoomName,
 			IsPublic: data.IsPublic,
 		}
