@@ -38,6 +38,7 @@ func (s *Streamer) Listen() {
 }
 
 func (s *Streamer) sendToRoom(roomID, msg string) {
+	log.Printf("send to room: %s, msg: %s", roomID, msg)
 	for _, c := range s.clients {
 		if c.roomID == roomID {
 			c.sender <- msg
