@@ -23,7 +23,7 @@ paths:
                 $ref: "#/components/schemas/postRoomSuccess"
   /api/rooms:
     get:
-      summary: 誰でも入れる部屋一覧を取得
+      summary: 全ての部屋一覧を取得
       responses:
         '200':
           description: OK
@@ -39,7 +39,7 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
       requestBody:
         required: true
         content:
@@ -53,9 +53,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/enterRoomSuccess"
-  /api/ws:
+  /api/ws/{roomId}:
     get:
       summary: WebSocket接続
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: OK
@@ -98,12 +104,15 @@ components:
             type: string
           roomName:
             type: string
+          isPublic:
+            type: boolean
           userCount:
             type: integer
             description: 部屋に入っている人数
       required:
         - roomId
         - roomName
+        - isPublic
         - userCount
     enterRoom:
       type: object
