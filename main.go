@@ -1,9 +1,10 @@
 package main
 
 import (
-	"h24s_19/internal/pkg/config"
-	"net/http"
 	"fmt"
+	"h24s_19/internal/pkg/config"
+	"h24s_19/internal/pkg/streamer"
+	"net/http"
 
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
@@ -23,6 +24,7 @@ type RoomRequest struct {
 }
 
 func main() {
+	s := streamer.NewStreamer()
 	// Echoの新しいインスタンスを作成
 	e := echo.New()
 
@@ -37,6 +39,8 @@ func main() {
 	if err != nil {
 		e.Logger.Fatal(err)
 	}
+
+	e.GET("/api/ws/:roomID", s.ConnectWS)
 
 	e.GET("/api/rooms", func(c echo.Context) error {
 		var rooms []Room
@@ -75,6 +79,8 @@ func main() {
 	})
 
 	defer db.Close()
+
+	go s.Listen()
 
 	// Webサーバーをポート番号8080で起動し、エラーが発生した場合はログにエラーメッセージを出力する
 	e.Logger.Fatal(e.Start(":8080"))
