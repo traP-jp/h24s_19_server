@@ -2,7 +2,11 @@ module h24s_19
 
 go 1.22.3
 
-require github.com/labstack/echo/v4 v4.12.0
+require (
+	github.com/gofrs/uuid v4.4.0+incompatible
+	github.com/gorilla/websocket v1.5.3
+	github.com/labstack/echo/v4 v4.12.0
+)
 
 require (
 	github.com/labstack/gommon v0.4.2 // indirect
