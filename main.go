@@ -51,6 +51,7 @@ func main() {
 		var rooms []Room
 		err := db.Select(&rooms, "SELECT * FROM rooms")
 		if err != nil {
+			e.Logger.Fatal(err)
 			return err
 		}
 		return c.JSON(http.StatusOK, rooms)
