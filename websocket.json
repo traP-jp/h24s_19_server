@@ -1,10 +1,19 @@
 {
+  // サーバーからのレスポンスのオブジェクトには type プロパティを付けてフロントが区別できるようにする
   "postWord": {
     "word": "漢字の単語",
     "reading": "かんじのたんご"
   },
   "postWordResponse": {
+    "type": "posted_word",
     "wordId": 1, // auto incrementで良さそう
+    "word": "漢字の単語",
+    "reading": "かんじのたんご",
+    "basicScore": 3 // 基礎点
+  },
+  "rejectedPostWord": {
+    // 送信タイミングが被って拒否された場合、拒否された送信者にだけ送信
+    "type": "post_word_rejected",
     "word": "漢字の単語",
     "reading": "かんじのたんご"
   },
@@ -15,6 +24,15 @@
   "goodWord": {
     // 後回しでいい
     "wordId": 1,
-    "point": 3 // フロントででバウンスして2以上もアリにしたい
+    "score": 3 // フロントででバウンスして2以上もアリにしたい
+  },
+  "scoreChange": {
+    // いいねや通報で得点が変動した時
+    "type": "score_change",
+    "wordId": 1,
+    "additionalScore": 3, // 「いいね」によって加算されたスコア
+    "basicScore": 3, // 基礎点
+    "totalScore": 6, // 合計スコア
+    "isInvalid": false // 通報によって単語が無効になったら true
   }
 }
