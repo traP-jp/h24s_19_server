@@ -29,8 +29,8 @@ func MySQL() *mysql.Config {
 	c.Passwd = getEnv("MYSQL_PASSWORD", "password")
 	c.Addr = fmt.Sprintf(
 		"%s:%s",
-		getEnv("DB_HOST", "localhost"),
-		getEnv("DB_PORT", "3306"),
+		getEnv("MYSQL_HOST", "localhost"),
+		getEnv("MYSQL_PORT", "3306"),
 	)
 	c.Collation = "utf8mb4_general_ci"
 	c.AllowNativePasswords = true

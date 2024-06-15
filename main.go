@@ -1,18 +1,17 @@
 package main
 
 import (
-	"net/http"
 	"h24s_19/internal/pkg/config"
-	
+	"net/http"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
 )
 
 type Room struct {
-	roomId string `db:"room_id"`
-	roomName string `db:"room_name"`
-	isPublic bool `db:"is_public"`
+	RoomId string `db:"room_id"`
+	RoomName string `db:"room_name"`
+	IsPublic bool `db:"is_public"`
 }
 
 
@@ -35,6 +34,7 @@ func main() {
 		var rooms []Room
 		err := db.Select(&rooms, "SELECT * FROM rooms")
 		if err != nil {
+			e.Logger.Fatal(err)
 			return err
 		}
 		return c.JSON(http.StatusOK, rooms)
