@@ -7,6 +7,7 @@ import (
 
 type client struct {
 	id       uuid.UUID
+	name     string
 	roomID   string
 	conn     *websocket.Conn
 	receiver chan receiveData

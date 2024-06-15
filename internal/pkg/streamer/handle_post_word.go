@@ -1,6 +1,9 @@
 package streamer
 
 import (
+	"h24s_19/internal/pkg/util"
+
+	"fmt"
 	"encoding/json"
 	"errors"
 	"github.com/gofrs/uuid"
@@ -29,17 +32,40 @@ type rejectedPostWord struct {
 var NotMatchShiritoriError = errors.New("ルール違反")
 
 func addWord(db *sqlx.DB, roomId string, word string, reading string, basic_score int) (int, error) {
-	if false { // ..TestShiritori(word)
+	lastReading, err := getLastWordReading(db, roomId)
+	if err != nil {
+		fmt.Println("failed to get last word: %v", err)
+		return 0, err
+	}
+	if lastReading != "" && false { // util.CheckShiritori(lastReading, reading)
 		return 0, NotMatchShiritoriError
 	}
-	var wordId int
-	db.QueryRow("INSERT INTO words (room_id, word, reading, basic_score) VALUES (?, ?, ?, ?) RETURNING word_id", roomId, word, reading, basic_score).Scan(&wordId)
+	fmt.Println("word: %s, reading: %s, basic_score: %d", word, reading, basic_score);
+	res, err := db.Exec("INSERT INTO words (room_id, word, reading, basic_score) VALUES (?, ?, ?, ?)", roomId, word, reading, basic_score);
+	if err != nil {
+		fmt.Println("failed to insert word: %v", err)
+		return 0, err
+	}
+	wordId, err := res.LastInsertId()
+	if err != nil {
+		fmt.Println("failed to get last insert id: %v",)
+		return 0, err
+	}
 
-	return wordId, nil
+	return int(wordId), nil
+}
+
+func getLastWordReading(db *sqlx.DB, roomId string) (string, error) {
+	var reading string
+	err := db.Get(&reading, "SELECT reading FROM words WHERE room_id = ? ORDER BY word_id DESC LIMIT 1", roomId)
+	if err != nil {
+		return "", nil
+	}
+	return reading, nil
 }
 
 func (s *Streamer) handlePostWord(db *sqlx.DB, roomId string, clientID uuid.UUID, args postWordArgs) error {
-	basicScore := 0 // ..GetBasicScore(args.Word)
+	basicScore := util.GetScore(args.Word)
 	wordId, err := addWord(db, roomId, args.Word, args.Reading, basicScore)
 	if err != nil {
 		if err == NotMatchShiritoriError {
@@ -50,12 +76,14 @@ func (s *Streamer) handlePostWord(db *sqlx.DB, roomId string, clientID uuid.UUID
 			}
 			messageBytes, err := json.Marshal(message)
 			if err != nil {
+				fmt.Println("failed to marshal message: %v", err)
 				return err
 			}
 			s.sendTo(string(messageBytes), func(c *client) bool {
 				return c.id == clientID
 			})
 		}
+		
 		return err
 	}
 	message := postWordResponse{
@@ -67,6 +95,7 @@ func (s *Streamer) handlePostWord(db *sqlx.DB, roomId string, clientID uuid.UUID
 	}
 	messageBytes, err := json.Marshal(message)
 	if err != nil {
+		fmt.Println("failed to marshal message: %v", err)
 		return err
 	}
 
