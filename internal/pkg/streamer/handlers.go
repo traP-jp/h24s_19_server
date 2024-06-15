@@ -3,6 +3,7 @@ package streamer
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/jmoiron/sqlx"
 	"log"
 )
 
@@ -11,7 +12,7 @@ type payload struct {
 	Args json.RawMessage `json:"args,omitempty"`
 }
 
-func (s *Streamer) handleWebSocket(data receiveData) error {
+func (s *Streamer) handleWebSocket(db *sqlx.DB, data receiveData) error {
 	var req payload
 	err := json.Unmarshal(data.payload, &req)
 	if err != nil {
@@ -25,7 +26,7 @@ func (s *Streamer) handleWebSocket(data receiveData) error {
 		if err != nil {
 			return err
 		}
-		s.handlePostWord(data.roomID, args)
+		s.handlePostWord(db, data.roomID, data.clientID, args)
 	default:
 		log.Printf("unknown type: %s", req.Type)
 		return fmt.Errorf("unknown type: %s", req.Type)

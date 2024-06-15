@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/gofrs/uuid"
+	"github.com/jmoiron/sqlx"
 )
 
 type receiveData struct {
@@ -24,12 +25,12 @@ func NewStreamer() *Streamer {
 	}
 }
 
-func (s *Streamer) Listen() {
+func (s *Streamer) Listen(db *sqlx.DB) {
 	for {
 		data := <-s.receiver
 
 		go func() {
-			err := s.handleWebSocket(data)
+			err := s.handleWebSocket(db, data)
 			if err != nil {
 				log.Printf("failed to handle websocket: %v", err)
 			}
@@ -44,4 +45,14 @@ func (s *Streamer) sendToRoom(roomID, msg string) {
 			c.sender <- msg
 		}
 	}
+}
+
+
+func (s *Streamer) sendTo(msg string, cond func(c *client) bool) error {
+	for _, c := range s.clients {
+		if cond(c) {
+			c.sender <- msg
+		}
+	}
+	return nil
 }

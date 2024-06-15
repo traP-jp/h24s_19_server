@@ -39,6 +39,7 @@ func main() {
 	if err != nil {
 		e.Logger.Fatal(err)
 	}
+	defer db.Close()
 
 	e.GET("/api/ws/:roomID", s.ConnectWS)
 
@@ -78,9 +79,7 @@ func main() {
 		return c.JSON(http.StatusOK, room)
 	})
 
-	defer db.Close()
-
-	go s.Listen()
+	go s.Listen(db)
 
 	// Webサーバーをポート番号8080で起動し、エラーが発生した場合はログにエラーメッセージを出力する
 	e.Logger.Fatal(e.Start(":8080"))

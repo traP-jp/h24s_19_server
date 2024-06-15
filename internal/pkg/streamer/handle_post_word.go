@@ -2,6 +2,9 @@ package streamer
 
 import (
 	"encoding/json"
+	"errors"
+	"github.com/gofrs/uuid"
+	"github.com/jmoiron/sqlx"
 )
 
 type postWordArgs struct {
@@ -23,24 +26,44 @@ type rejectedPostWord struct {
 	Reading string `json:reading,omitempty`
 }
 
-func (s *Streamer) handlePostWord(roomId string, args postWordArgs) error {
-	// wordId, err := ..AddWord(roomId, args.Word, args.Reading)
-	// if err != nil {
-	// 	if err == NotMatchShiritoriError {
-	// 		return s.send(rejectedPostWord{
-	// 			Type: "post_word_rejected",
-	// 			Word: args.Word,
-	// 			Reading: args.Reading,
-	// 		})
-	// 	}
-	// 	return err
-	// }
+var NotMatchShiritoriError = errors.New("ルール違反")
+
+func addWord(db *sqlx.DB, roomId string, word string, reading string, basic_score int) (int, error) {
+	if false { // ..TestShiritori(word)
+		return 0, NotMatchShiritoriError
+	}
+	var wordId int
+	db.QueryRow("INSERT INTO words (room_id, word, reading, basic_score) VALUES (?, ?, ?, ?) RETURNING word_id", roomId, word, reading, basic_score).Scan(&wordId)
+
+	return wordId, nil
+}
+
+func (s *Streamer) handlePostWord(db *sqlx.DB, roomId string, clientID uuid.UUID, args postWordArgs) error {
+	basicScore := 0 // ..GetBasicScore(args.Word)
+	wordId, err := addWord(db, roomId, args.Word, args.Reading, basicScore)
+	if err != nil {
+		if err == NotMatchShiritoriError {
+			message := rejectedPostWord{
+				Type:    "post_word_rejected",
+				Word:    args.Word,
+				Reading: args.Reading,
+			}
+			messageBytes, err := json.Marshal(message)
+			if err != nil {
+				return err
+			}
+			s.sendTo(string(messageBytes), func(c *client) bool {
+				return c.id == clientID
+			})
+		}
+		return err
+	}
 	message := postWordResponse{
 		Type:       "posted_word",
-		WordId:     0, // wordId,
+		WordId:     wordId,
 		Word:       args.Word,
 		Reading:    args.Reading,
-		BasicScore: 0, // GetBasicScore(args.Word),
+		BasicScore: basicScore,
 	}
 	messageBytes, err := json.Marshal(message)
 	if err != nil {
