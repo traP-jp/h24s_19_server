@@ -74,7 +74,7 @@ components:
         isPublic:
           type: boolean
           description: 部屋の種類(公開か非公開か)
-        name:
+        roomName:
           type: string
           description: 部屋名
         password:
@@ -82,7 +82,7 @@ components:
           description: 非公開の場合のパスワード
       required:
         - isPublic
-        - name
+        - roomName
     postRoomSuccess:
       type: object
       properties:
@@ -109,11 +109,11 @@ components:
           userCount:
             type: integer
             description: 部屋に入っている人数
-      required:
-        - roomId
-        - roomName
-        - isPublic
-        - userCount
+        required:
+          - roomId
+          - roomName
+          - isPublic
+          - userCount
     enterRoom:
       type: object
       properties:
@@ -136,4 +136,4 @@ components:
           description: ユーザー名
       required:
         - userId
-        - username
+        - userName
