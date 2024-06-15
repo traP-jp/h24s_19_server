@@ -65,11 +65,8 @@ components:
     postRoom:
       type: object
       properties:
-        type:
-          type: string
-          enum:
-            - public
-            - private
+        isPublic:
+          type: boolean
           description: 部屋の種類(公開か非公開か)
         name:
           type: string
@@ -78,7 +75,7 @@ components:
           type: string
           description: 非公開の場合のパスワード
       required:
-        - type
+        - isPublic
         - name
     postRoomSuccess:
       type: object
