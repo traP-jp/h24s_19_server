@@ -12,9 +12,9 @@ import (
 )
 
 type Room struct {
-	RoomId   string `db:"room_id"`
-	RoomName string `db:"room_name"`
-	IsPublic bool   `db:"is_public"`
+	RoomId   uuid.UUID `db:"room_id"`
+	RoomName string    `db:"room_name"`
+	IsPublic bool      `db:"is_public"`
 }
 
 type RoomRequest struct {
@@ -63,7 +63,7 @@ func main() {
 		}
 		_, err = db.Exec(
 			"INSERT INTO rooms (room_id, room_name, is_public) VALUES (?, ?, ?)",
-			roomId.String(),
+			roomId,
 			data.RoomName,
 			data.IsPublic,
 		)
@@ -71,7 +71,7 @@ func main() {
 			return err
 		}
 		room := Room{
-			RoomId:   roomId.String(),
+			RoomId:   roomId,
 			RoomName: data.RoomName,
 			IsPublic: data.IsPublic,
 		}
