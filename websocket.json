@@ -1,0 +1,20 @@
+{
+  "postWord": {
+    "word": "漢字の単語",
+    "reading": "かんじのたんご"
+  },
+  "postWordResponse": {
+    "wordId": 1, // auto incrementで良さそう
+    "word": "漢字の単語",
+    "reading": "かんじのたんご"
+  },
+  "reportWord": {
+    // 後回しでいい
+    "wordId": 1
+  },
+  "goodWord": {
+    // 後回しでいい
+    "wordId": 1,
+    "point": 3 // フロントででバウンスして2以上もアリにしたい
+  }
+}

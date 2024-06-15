@@ -1,0 +1,133 @@
+openapi: 3.0.0
+
+info:
+  title: hackathon 24spring 19
+  version: 1.0.0
+
+paths:
+  /api/room:
+    post:
+      summary: 部屋を作成
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/postRoom'
+      responses:
+        '200':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/postRoomSuccess"
+  /api/rooms:
+    get:
+      summary: 誰でも入れる部屋一覧を取得
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/getRooms"
+  /api/room/{roomId}/enter:
+    post:
+      summary: 部屋に入る
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/enterRoom'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/enterRoomSuccess"
+  /api/ws:
+    get:
+      summary: WebSocket接続
+      responses:
+        '200':
+          description: OK
+
+components:
+  schemas:
+    postRoom:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - public
+            - private
+          description: 部屋の種類(公開か非公開か)
+        name:
+          type: string
+          description: 部屋名
+        password:
+          type: string
+          description: 非公開の場合のパスワード
+      required:
+        - type
+        - name
+    postRoomSuccess:
+      type: object
+      properties:
+        roomId:
+          type: string
+          description: 部屋ID
+        roomName:
+          type: string
+          description: 部屋名
+      required:
+        - roomId
+        - roomName
+    getRooms:
+      type: array
+      items:
+        type: object
+        properties:
+          roomId:
+            type: string
+          roomName:
+            type: string
+          userCount:
+            type: integer
+            description: 部屋に入っている人数
+      required:
+        - roomId
+        - roomName
+        - userCount
+    enterRoom:
+      type: object
+      properties:
+        userName:
+          type: string
+          description: ユーザ名
+        password:
+          type: string
+          description: 非公開の場合のパスワード
+      required:
+        - userName
+    enterRoomSuccess:
+      type: object
+      properties:
+        userId:
+          type: string
+          description: ユーザーID
+        userName:
+          type: string
+          description: ユーザー名
+      required:
+        - userId
+        - username
