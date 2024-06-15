@@ -39,7 +39,7 @@ func (c *client) listen() {
 		data := receiveData{
 			clientID: c.id,
 			roomID:   c.roomID,
-			payload:     msg,
+			payload:  msg,
 		}
 
 		c.receiver <- data
