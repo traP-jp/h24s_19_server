@@ -18,6 +18,11 @@ type RoomRequest struct {
 	Password string `json:"password"`
 }
 
+type GetRoomsParams struct {
+	Limit  int `json:"limit"`
+	Offset int `json:"offset"`
+}
+
 func (r *Repository) GetRoom(ctx context.Context, roomId string) (Room, error) {
 	var room Room
 	err := r.db.Get(&room, "SELECT * FROM rooms WHERE room_id = ?", roomId)
@@ -27,9 +32,9 @@ func (r *Repository) GetRoom(ctx context.Context, roomId string) (Room, error) {
 	return room, nil
 }
 
-func (r *Repository) GetRooms(ctx context.Context) ([]Room, error) {
+func (r *Repository) GetRooms(ctx context.Context, params GetRoomsParams) ([]Room, error) {
 	var rooms []Room
-	err := r.db.Select(&rooms, "SELECT * FROM rooms")
+	err := r.db.Select(&rooms, "SELECT * FROM rooms LIMIT ? OFFSET ?", params.Limit, params.Offset)
 	if err != nil {
 		return nil, err
 	}

@@ -31,8 +31,17 @@ type EnterRoomResponse struct {
 	UserName string `json:"userName"`
 }
 
+type GetRoomsParams struct {
+	Limit  int `json:"limit"`
+	Offset int `json:"offset"`
+}
+
 func (h *Handler) GetRooms(c echo.Context) error {
-	rooms, err := h.repo.GetRooms(c.Request().Context())
+	var params GetRoomsParams
+	if err := c.Bind(&params); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err).SetInternal(err)
+	}
+	rooms, err := h.repo.GetRooms(c.Request().Context(), repository.GetRoomsParams{params.Limit, params.Offset})
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err).SetInternal(err)
 	}
