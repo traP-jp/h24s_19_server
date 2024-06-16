@@ -17,18 +17,18 @@ type postWordArgs struct {
 }
 
 type postWordResponse struct {
-	Type       string `json:type,omitempty`
-	UserName   string `json:userName,omitempty`
-	WordId     int    `json:wordId,omitempty`
-	Word       string `json:word,omitempty`
-	Reading    string `json:reading,omitempty`
-	BasicScore int    `json:basicScore,omitempty`
+	Type       string `json:"type"`
+	UserName   string `json:"userName"`
+	WordId     int    `json:"wordId"`
+	Word       string `json:"word"`
+	Reading    string `json:"reading"`
+	BasicScore int    `json:"basicScore"`
 }
 
 type rejectedPostWord struct {
-	Type    string `json:type,omitempty`
-	Word    string `json:word,omitempty`
-	Reading string `json:reading,omitempty`
+	Type    string `json:"type"`
+	Word    string `json:"word"`
+	Reading string `json:"reading"`
 }
 
 var NotMatchShiritoriError = errors.New("ルール違反")
