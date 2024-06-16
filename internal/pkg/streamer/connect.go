@@ -17,6 +17,7 @@ var ErrorUserNotFound = echo.NewHTTPError(http.StatusNotFound, "user not found")
 func (s *Streamer) ConnectWS(c echo.Context) error {
 	fmt.Println("connectWS")
 	roomID := c.Param("roomID")
+	fmt.Println("roomID: ", roomID)
 	_, err := s.repo.GetRoom(c.Request().Context(), roomID)
 	if err != nil {
 		fmt.Println("room not found")
