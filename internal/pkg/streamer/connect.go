@@ -18,6 +18,7 @@ func (s *Streamer) ConnectWS(c echo.Context) error {
 	fmt.Println("connectWS")
 	roomID, err := c.Cookie("roomID")
 	if err != nil {
+		fmt.Println("room cookie not set")
 		return ErrorRoomNotFound
 	}
 	fmt.Println("roomID: ", roomID.Value)
