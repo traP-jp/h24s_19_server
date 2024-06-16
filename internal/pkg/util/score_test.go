@@ -24,7 +24,7 @@ func TestGetMode(t *testing.T) {
 }
 
 func TestGetScore(t *testing.T) {
-	result := GetScore("あいうえおおおえういあ")
+	result := GetScore("ああああ", "あいうえおおおえういあ", map[rune]int{'あ': 1, 'い': 2, 'う': 3, 'え': 4, 'お': 5})
 	if result != 13 {
 		t.Error("Expected 13, got ", result)
 	}

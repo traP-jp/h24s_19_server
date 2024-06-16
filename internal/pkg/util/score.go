@@ -52,11 +52,21 @@ func GetMode(s string) int {
 	return max
 }
 
+func GetScoreByFrequency(s string, count map[rune]int) int {
+	score := 0
+	runes := []rune(s)
+	size := getLength(s)
+	for i := 0; i < size; i++ {
+		score = score + 100/count[runes[i]]
+	}
+	return score
+}
+
 var coefLength = 1
-
-// var coefSuffixRhyme = 1
+var coefSuffixRhyme = 1
 var coefMode = 10
+var coefFrequency = 1
 
-func GetScore(s string) int {
-	return coefLength*getLength(s) + coefMode*(getLength(s)-GetMode(s))/getLength(s)
+func GetScore(lastReading, currentReading string, count map[rune]int) int {
+	return coefLength*getLength(currentReading) + coefSuffixRhyme*CountSuffixRhyme(lastReading, currentReading) + coefMode*GetMode(currentReading) + coefFrequency*GetScoreByFrequency(currentReading, count)
 }
