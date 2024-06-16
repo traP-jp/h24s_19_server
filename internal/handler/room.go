@@ -53,6 +53,7 @@ func (h *Handler) CreateRoom(c echo.Context) error {
 
 var ErrorRoomNotFound = errors.New("ルームが見つかりません")
 var ErrorNotMatchRoomPassword = errors.New("パスワードが違います")
+var ErrorUsernameConflict = errors.New("同じ名前のユーザーがいます")
 
 func (h *Handler) EnterRoom(c echo.Context) error {
 	roomId := c.Param("roomId")
@@ -72,6 +73,12 @@ func (h *Handler) EnterRoom(c echo.Context) error {
 	_, err := h.repo.GetRoom(c.Request().Context(), roomId)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, ErrorRoomNotFound)
+	}
+
+	// 同じ名前のユーザーがいないか確認
+	users, _ := h.repo.GetUser(c.Request().Context(), params.UserName)
+	if users.UserName == params.UserName {
+		return echo.NewHTTPError(http.StatusBadRequest, ErrorUsernameConflict)
 	}
 
 	user, err := h.repo.CreateUser(c.Request().Context(), repository.CreateUserRequest{UserName: params.UserName, RoomId: roomId, RoomPassword: params.RoomPassword})
