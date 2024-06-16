@@ -37,7 +37,7 @@ func (r *Repository) GetRoom(ctx context.Context, roomId string) (Room, error) {
 
 func (r *Repository) GetRooms(ctx context.Context, params GetRoomsParams) ([]Room, error) {
 	var rooms []Room
-	err := r.db.Select(&rooms, "SELECT * FROM rooms LIMIT ? OFFSET ?", params.Limit, params.Offset)
+	err := r.db.Select(&rooms, "SELECT * FROM rooms")
 	if err != nil {
 		return nil, err
 	}
