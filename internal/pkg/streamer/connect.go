@@ -10,12 +10,20 @@ import (
 
 var upgrader = websocket.Upgrader{}
 
+var ErrorRoomNotFound = echo.NewHTTPError(http.StatusNotFound, "room not found")
+var ErrorUserCookieNotSet = echo.NewHTTPError(http.StatusUnauthorized, "user cookie not set")
+var ErrorUserNotFound = echo.NewHTTPError(http.StatusNotFound, "user not found")
+
 func (s *Streamer) ConnectWS(c echo.Context) error {
 	roomID := c.Param("roomID")
+	_, err := s.repo.GetRoom(c.Request().Context(), roomID)
+	if err != nil {
+		return ErrorRoomNotFound
+	}
 
 	userIdInCookie, err := c.Cookie("userId")
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err)
+		return ErrorUserCookieNotSet
 	}
 	userId := userIdInCookie.Value
 
@@ -23,7 +31,7 @@ func (s *Streamer) ConnectWS(c echo.Context) error {
 
 	user, error := s.repo.GetUser(c.Request().Context(), userId)
 	if error != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, error)
+		return ErrorUserNotFound
 	}
 
 	fmt.Println("2")

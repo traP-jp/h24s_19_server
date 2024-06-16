@@ -27,6 +27,8 @@ func (h *Handler) SetupRoutes(api *echo.Group) {
 
 	api.POST("/room/:roomId/enter", h.EnterRoom)
 
+	api.GET("/debug/users", h.GetUsers)
+
 	// ws API
 	api.GET("/ws/:roomID", h.streamer.ConnectWS)
 }

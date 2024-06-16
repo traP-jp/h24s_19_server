@@ -101,6 +101,7 @@ func (s *Streamer) handlePostWord(db *sqlx.DB, roomId string, clientID uuid.UUID
 		fmt.Println("failed to marshal message: ", err)
 		return err
 	}
+	fmt.Println("message: ", string(messageBytes))
 
 	s.sendToRoom(roomId, string(messageBytes))
 

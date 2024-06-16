@@ -37,6 +37,15 @@ func (r *Repository) GetUser(ctx context.Context, userId string) (User, error) {
 	return user, nil
 }
 
+func (r *Repository) GetUsers(ctx context.Context) ([]User, error) {
+	var users []User
+	err := r.db.Select(&users, "SELECT * FROM users")
+	if err != nil {
+		return nil, err
+	}
+	return users, nil
+}
+
 var NotMatchRoomPasswordError = errors.New("パスワードが違います")
 
 func (r *Repository) CreateUser(ctx context.Context, params CreateUserRequest) (User, error) {
