@@ -4,6 +4,7 @@
     "word": "漢字の単語",
     "reading": "かんじのたんご"
   },
+  "init": {},
   "postWordResponse": {
     "type": "posted_word",
     "wordId": 1, // auto incrementで良さそう

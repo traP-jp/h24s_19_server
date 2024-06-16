@@ -68,6 +68,35 @@ func getLastWordReading(db *sqlx.DB, roomId string) (string, error) {
 	return reading, nil
 }
 
+func (s *Streamer) handleInit(db *sqlx.DB, roomId string, clientID uuid.UUID) error {
+	var words []struct {
+		Word    string `db:"word"`
+		Reading string `db:"reading"`
+	}
+	err := db.Select(&words, "SELECT `word`, `reading` FROM `words` WHERE `room_id` = ? ORDER BY `word_id` LIMIT 10", roomId)
+	if err != nil {
+		fmt.Println("failed to get words:", err)
+		return err
+	}
+
+	for _, word := range words {
+		message := postWordResponse{
+			Type:    "posted_word",
+			Word:    word.Word,
+			Reading: word.Reading,
+		}
+		messageBytes, err := json.Marshal(message)
+		if err != nil {
+			fmt.Println("failed to marshal message: ", err)
+			return err
+		}
+		s.sendTo(string(messageBytes), func(c *client) bool {
+			return c.id == clientID
+		})
+	}
+	return nil
+}
+
 func (s *Streamer) handlePostWord(db *sqlx.DB, roomId string, clientID uuid.UUID, args postWordArgs) error {
 	lastReading, err := getLastWordReading(db, roomId)
 	if err != nil {

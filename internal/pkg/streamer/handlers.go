@@ -28,6 +28,11 @@ func (s *Streamer) handleWebSocket(db *sqlx.DB, data receiveData) error {
 			return err
 		}
 		s.handlePostWord(db, data.roomID, data.clientID, args)
+	case "init":
+		if err != nil {
+			return err
+		}
+		s.handleInit(db, data.roomID, data.clientID)
 	default:
 		log.Printf("unknown type: %s", req.Type)
 		return fmt.Errorf("unknown type: %s", req.Type)
