@@ -1,6 +1,7 @@
 package streamer
 
 import (
+	"h24s_19/internal/repository"
 	"log"
 
 	"github.com/gofrs/uuid"
@@ -16,12 +17,14 @@ type receiveData struct {
 type Streamer struct {
 	clients  map[uuid.UUID]*client
 	receiver chan receiveData
+	repo     *repository.Repository
 }
 
-func NewStreamer() *Streamer {
+func NewStreamer(r *repository.Repository) *Streamer {
 	return &Streamer{
 		clients:  make(map[uuid.UUID]*client),
 		receiver: make(chan receiveData),
+		repo:     r,
 	}
 }
 
@@ -46,7 +49,6 @@ func (s *Streamer) sendToRoom(roomID, msg string) {
 		}
 	}
 }
-
 
 func (s *Streamer) sendTo(msg string, cond func(c *client) bool) error {
 	for _, c := range s.clients {

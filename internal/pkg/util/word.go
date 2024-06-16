@@ -17,7 +17,7 @@ func GetLastRune(s string) rune {
 }
 
 func CheckShiritori(a string, b string) bool {
-	return GetLastRune(a) == GetFirstRune(b) 
+	return GetLastRune(a) == GetFirstRune(b)
 }
 
 var vowel = map[rune]rune{

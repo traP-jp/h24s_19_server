@@ -12,7 +12,6 @@ import (
 )
 
 func main() {
-	s := streamer.NewStreamer()
 	// Echoの新しいインスタンスを作成
 	e := echo.New()
 
@@ -31,6 +30,7 @@ func main() {
 
 	// setup repository
 	repo := repository.New(db)
+	s := streamer.NewStreamer(repo)
 
 	// setup routes
 	h := handler.New(repo, s)

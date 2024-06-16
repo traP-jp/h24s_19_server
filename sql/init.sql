@@ -15,4 +15,13 @@ CREATE TABLE `words` (
   `basic_score` INTEGER NOT NULL,
   PRIMARY KEY (`word_id`),
   FOREIGN KEY (`room_id`) REFERENCES `rooms`(`room_id`)
-)
+);
+
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users` (
+  `user_id` VARCHAR(36) NOT NULL,
+  `user_name` varchar(30) NOT NULL,
+  `room_id` VARCHAR(36) NOT NULL,
+  PRIMARY KEY (`user_id`),
+  FOREIGN KEY (`room_id`) REFERENCES `rooms`(`room_id`)
+);

@@ -2,7 +2,6 @@ package util
 
 import "testing"
 
-
 func TestPalindrome(t *testing.T) {
 	result := IsPalindrome("あいうえおかおえういあ")
 	if result != true {

@@ -38,7 +38,6 @@ func CountSuffixRhyme(s1, s2 string) int {
 	return count
 }
 
-
 func GetMode(s string) int {
 	runes := []rune(s)
 	size := getLength(s)
@@ -53,12 +52,11 @@ func GetMode(s string) int {
 	return max
 }
 
-
-
 var coefLength = 1
+
 // var coefSuffixRhyme = 1
 var coefMode = 10
 
 func GetScore(s string) int {
-	return coefLength*getLength(s) + coefMode*(getLength(s) - GetMode(s))/getLength(s)
+	return coefLength*getLength(s) + coefMode*(getLength(s)-GetMode(s))/getLength(s)
 }

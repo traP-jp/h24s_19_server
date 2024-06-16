@@ -3,8 +3,9 @@ package streamer
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/jmoiron/sqlx"
 	"log"
+
+	"github.com/jmoiron/sqlx"
 )
 
 type payload struct {
