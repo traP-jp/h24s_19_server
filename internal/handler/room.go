@@ -41,7 +41,10 @@ func (h *Handler) GetRooms(c echo.Context) error {
 	if err := c.Bind(&params); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err).SetInternal(err)
 	}
-	rooms, err := h.repo.GetRooms(c.Request().Context(), repository.GetRoomsParams{params.Limit, params.Offset})
+	rooms, err := h.repo.GetRooms(c.Request().Context(), repository.GetRoomsParams{
+		Limit:  params.Limit,
+		Offset: params.Offset,
+	})
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err).SetInternal(err)
 	}
