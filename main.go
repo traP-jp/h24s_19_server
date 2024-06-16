@@ -12,7 +12,6 @@ import (
 )
 
 func main() {
-	s := streamer.NewStreamer()
 	// Echoの新しいインスタンスを作成
 	e := echo.New()
 
@@ -31,13 +30,14 @@ func main() {
 
 	// setup repository
 	repo := repository.New(db)
+	s := streamer.NewStreamer(repo)
 
 	// setup routes
 	h := handler.New(repo, s)
 	v1API := e.Group("/api")
 	h.SetupRoutes(v1API)
 
-	go s.Listen()
+	go s.Listen(db)
 
 	// Webサーバーをポート番号8080で起動し、エラーが発生した場合はログにエラーメッセージを出力する
 	e.Logger.Fatal(e.Start(":8080"))

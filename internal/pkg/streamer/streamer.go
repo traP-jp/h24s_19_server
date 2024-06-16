@@ -1,9 +1,11 @@
 package streamer
 
 import (
+	"h24s_19/internal/repository"
 	"log"
 
 	"github.com/gofrs/uuid"
+	"github.com/jmoiron/sqlx"
 )
 
 type receiveData struct {
@@ -15,21 +17,23 @@ type receiveData struct {
 type Streamer struct {
 	clients  map[uuid.UUID]*client
 	receiver chan receiveData
+	repo     *repository.Repository
 }
 
-func NewStreamer() *Streamer {
+func NewStreamer(r *repository.Repository) *Streamer {
 	return &Streamer{
 		clients:  make(map[uuid.UUID]*client),
 		receiver: make(chan receiveData),
+		repo:     r,
 	}
 }
 
-func (s *Streamer) Listen() {
+func (s *Streamer) Listen(db *sqlx.DB) {
 	for {
 		data := <-s.receiver
 
 		go func() {
-			err := s.handleWebSocket(data)
+			err := s.handleWebSocket(db, data)
 			if err != nil {
 				log.Printf("failed to handle websocket: %v", err)
 			}
@@ -44,4 +48,13 @@ func (s *Streamer) sendToRoom(roomID, msg string) {
 			c.sender <- msg
 		}
 	}
+}
+
+func (s *Streamer) sendTo(msg string, cond func(c *client) bool) error {
+	for _, c := range s.clients {
+		if cond(c) {
+			c.sender <- msg
+		}
+	}
+	return nil
 }

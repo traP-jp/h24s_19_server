@@ -18,6 +18,15 @@ type RoomRequest struct {
 	Password string `json:"password"`
 }
 
+func (r *Repository) GetRoom(ctx context.Context, roomId string) (Room, error) {
+	var room Room
+	err := r.db.Get(&room, "SELECT * FROM rooms WHERE room_id = ?", roomId)
+	if err != nil {
+		return Room{}, err
+	}
+	return room, nil
+}
+
 func (r *Repository) GetRooms(ctx context.Context) ([]Room, error) {
 	var rooms []Room
 	err := r.db.Select(&rooms, "SELECT * FROM rooms")

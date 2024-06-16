@@ -57,7 +57,7 @@ func GetScoreByFrequency(s string, count map[rune]int) int {
 	runes := []rune(s)
 	size := getLength(s)
 	for i := 0; i < size; i++ {
-		score = score + 100/count[runes[i]]
+		score = score + 100/(count[runes[i]]+1)
 	}
 	return score
 }

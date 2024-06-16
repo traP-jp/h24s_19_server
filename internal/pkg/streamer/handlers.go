@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+
+	"github.com/jmoiron/sqlx"
 )
 
 type payload struct {
@@ -11,11 +13,7 @@ type payload struct {
 	Args json.RawMessage `json:"args,omitempty"`
 }
 
-type postWordArgs struct {
-	Word string `json:"word"`
-}
-
-func (s *Streamer) handleWebSocket(data receiveData) error {
+func (s *Streamer) handleWebSocket(db *sqlx.DB, data receiveData) error {
 	var req payload
 	err := json.Unmarshal(data.payload, &req)
 	if err != nil {
@@ -29,7 +27,7 @@ func (s *Streamer) handleWebSocket(data receiveData) error {
 		if err != nil {
 			return err
 		}
-		s.sendToRoom(data.roomID, args.Word)
+		s.handlePostWord(db, data.roomID, data.clientID, args)
 	default:
 		log.Printf("unknown type: %s", req.Type)
 		return fmt.Errorf("unknown type: %s", req.Type)

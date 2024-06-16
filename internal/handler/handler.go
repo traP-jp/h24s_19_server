@@ -1,9 +1,10 @@
 package handler
 
 import (
-	"github.com/labstack/echo/v4"
 	"h24s_19/internal/pkg/streamer"
 	"h24s_19/internal/repository"
+
+	"github.com/labstack/echo/v4"
 )
 
 type Handler struct {
@@ -23,6 +24,10 @@ func (h *Handler) SetupRoutes(api *echo.Group) {
 	api.GET("/rooms", h.GetRooms)
 
 	api.POST("/room", h.CreateRoom)
+
+	api.POST("/room/:roomId/enter", h.EnterRoom)
+
+	api.GET("/debug/users", h.GetUsers)
 
 	// ws API
 	api.GET("/ws/:roomID", h.streamer.ConnectWS)

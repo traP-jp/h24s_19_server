@@ -2,7 +2,8 @@ package repository
 
 import (
 	"context"
-	"github.com/google/uuid"
+
+	"github.com/gofrs/uuid"
 )
 
 type runeCount struct {
@@ -11,7 +12,7 @@ type runeCount struct {
 	RuneCount int       `db:"rune_count"`
 }
 
-func (r *Repository) GetRuneCount(ctx context.Context, roomId uuid.UUID) (map[rune]int, error) {
+func (r *Repository) GetRuneCount(roomId uuid.UUID) (map[rune]int, error) {
 	var rune_count []runeCount
 	err := r.db.Select(&rune_count, "SELECT * FROM rune_counts WHERE room_id = ?", roomId)
 	if err != nil {
