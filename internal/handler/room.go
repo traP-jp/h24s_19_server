@@ -34,7 +34,7 @@ type EnterRoomResponse struct {
 func (h *Handler) GetRooms(c echo.Context) error {
 	rooms, err := h.repo.GetRooms(c.Request().Context())
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError).SetInternal(err)
+		return echo.NewHTTPError(http.StatusInternalServerError, err).SetInternal(err)
 	}
 	return c.JSON(http.StatusOK, rooms)
 }
@@ -42,11 +42,11 @@ func (h *Handler) GetRooms(c echo.Context) error {
 func (h *Handler) CreateRoom(c echo.Context) error {
 	var params RoomRequest
 	if err := c.Bind(&params); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
+		return echo.NewHTTPError(http.StatusBadRequest, err).SetInternal(err)
 	}
 	room, err := h.repo.CreateRoom(c.Request().Context(), repository.RoomRequest{params.RoomName, params.IsPublic, params.Password})
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError).SetInternal(err)
+		return echo.NewHTTPError(http.StatusInternalServerError, err).SetInternal(err)
 	}
 	return c.JSON(http.StatusCreated, room)
 }
@@ -62,7 +62,7 @@ func (h *Handler) EnterRoom(c echo.Context) error {
 
 	var params EnterRoomRequest
 	if err := c.Bind(&params); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
+		return echo.NewHTTPError(http.StatusBadRequest, err).SetInternal(err)
 	}
 
 	if false { // check room password
@@ -76,7 +76,7 @@ func (h *Handler) EnterRoom(c echo.Context) error {
 
 	user, err := h.repo.CreateUser(c.Request().Context(), repository.CreateUserRequest{UserName: params.UserName, RoomId: roomId, RoomPassword: params.RoomPassword})
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError).SetInternal(err)
+		return echo.NewHTTPError(http.StatusInternalServerError, err).SetInternal(err)
 	}
 
 	// set cookie
