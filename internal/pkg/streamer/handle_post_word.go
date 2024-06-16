@@ -39,7 +39,7 @@ func addWord(db *sqlx.DB, roomId string, word string, reading string, basic_scor
 		fmt.Println("failed to get last word:", err)
 		return 0, err
 	}
-	if lastReading != "" && false { // util.CheckShiritori(lastReading, reading)
+	if lastReading != "" && util.CheckShiritori(lastReading, reading) {
 		return 0, NotMatchShiritoriError
 	}
 	fmt.Println("word: %s, reading: %s, basic_score: %d", word, reading, basic_score)
