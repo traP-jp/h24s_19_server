@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"h24s_19/internal/repository"
 	"net/http"
 
@@ -50,10 +51,13 @@ func (h *Handler) CreateRoom(c echo.Context) error {
 	return c.JSON(http.StatusCreated, room)
 }
 
+var ErrorRoomNotFound = errors.New("ルームが見つかりません")
+var ErrorNotMatchRoomPassword = errors.New("パスワードが違います")
+
 func (h *Handler) EnterRoom(c echo.Context) error {
 	roomId := c.Param("roomId")
 	if roomId == "" {
-		return echo.NewHTTPError(http.StatusBadRequest)
+		return echo.NewHTTPError(http.StatusBadRequest, ErrorRoomNotFound)
 	}
 
 	var params EnterRoomRequest
@@ -62,7 +66,12 @@ func (h *Handler) EnterRoom(c echo.Context) error {
 	}
 
 	if false { // check room password
-		return echo.NewHTTPError(http.StatusBadRequest, repository.ErrorNotMatchRoomPassword)
+		return echo.NewHTTPError(http.StatusUnauthorized, ErrorNotMatchRoomPassword)
+	}
+
+	_, err := h.repo.GetRoom(c.Request().Context(), roomId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, ErrorRoomNotFound)
 	}
 
 	user, err := h.repo.CreateUser(c.Request().Context(), repository.CreateUserRequest{UserName: params.UserName, RoomId: roomId, RoomPassword: params.RoomPassword})

@@ -39,8 +39,8 @@ func addWord(db *sqlx.DB, roomId string, word string, reading string, basic_scor
 		fmt.Println("failed to get last word:", err)
 		return 0, err
 	}
-	fmt.Println("lastReading, reading, Check: ", lastReading, reading, util.CheckShiritori(lastReading, reading))
-	if lastReading != "" || util.CheckShiritori(lastReading, reading) {
+	fmt.Println("lastReading, reading, Check: ", lastReading, reading, util.SiritoriCheck(lastReading, reading))
+	if lastReading != "" && !util.SiritoriCheck(lastReading, reading) {
 		return 0, NotMatchShiritoriError
 	}
 
@@ -69,13 +69,14 @@ func getLastWordReading(db *sqlx.DB, roomId string) (string, error) {
 }
 
 func (s *Streamer) handlePostWord(db *sqlx.DB, roomId string, clientID uuid.UUID, args postWordArgs) error {
-	// lastReading, err := getLastWordReading(db, roomId)
-	// if err != nil {
-	// 	fmt.Println("failed to get last word:", err)
-	// 	return err
-	// }
-	// rune_count, err := s.repo.GetRuneCount()
-	basicScore := 0 // util.GetScore(lastReading, args.Reading, rune_count)
+	lastReading, err := getLastWordReading(db, roomId)
+	if err != nil {
+		fmt.Println("failed to get last word:", err)
+		return err
+	}
+	roomIdUuid := uuid.FromStringOrNil(roomId)
+	rune_count, err := s.repo.GetRuneCount(roomIdUuid)
+	basicScore := util.GetScore(lastReading, args.Reading, rune_count)
 	wordId, err := addWord(db, roomId, args.Word, args.Reading, basicScore)
 	if err != nil {
 		if err == NotMatchShiritoriError {
