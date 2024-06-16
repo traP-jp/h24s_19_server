@@ -1,0 +1,1 @@
+ALTER TABLE `words` ADD COLUMN `user_id` VARCHAR(36) NOT NULL;
