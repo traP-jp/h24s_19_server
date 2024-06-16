@@ -60,20 +60,22 @@ func (s *Streamer) ConnectWS(c echo.Context) error {
 	s.clients[client.id] = client
 	s.clients[client.id].name = user.UserName
 
-	fmt.Println("5")
+	return nil
 
-	go client.listen()
-	go client.send()
+	// fmt.Println("5")
 
-	fmt.Println("6")
+	// go client.listen()
+	// go client.send()
 
-	<-client.closer
+	// fmt.Println("6")
 
-	fmt.Println("7")
+	// <-client.closer
 
-	delete(s.clients, client.id)
+	// fmt.Println("7")
 
-	fmt.Println("8")
+	// delete(s.clients, client.id)
 
-	return c.NoContent(http.StatusOK)
+	// fmt.Println("8")
+
+	// return c.NoContent(http.StatusOK)
 }
