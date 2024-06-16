@@ -29,8 +29,9 @@ func (s *Streamer) ConnectWS(c echo.Context) error {
 
 	fmt.Println("userId: ", userId)
 
-	user, error := s.repo.GetUser(c.Request().Context(), userId)
-	if error != nil {
+	user, err := s.repo.GetUser(c.Request().Context(), userId)
+	fmt.Println("user:", user, "err:", err)
+	if err != nil {
 		return ErrorUserNotFound
 	}
 
