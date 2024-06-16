@@ -24,6 +24,14 @@ services:
   db:
     image: mysql:8.0
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: database
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_HOST: db
+      MYSQL_PORT: 3306
+      TZ: "Asia/Tokyo"
     volumes:
       - ./sql:/docker-entrypoint-initdb.d
     ports:
