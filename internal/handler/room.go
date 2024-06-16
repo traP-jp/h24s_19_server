@@ -16,8 +16,8 @@ type Room struct {
 }
 
 type RoomRequest struct {
-	RoomName string `json:"roomName"`
 	IsPublic bool   `json:"isPublic"`
+	RoomName string `json:"roomName"`
 	Password string `json:"password"`
 }
 
