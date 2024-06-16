@@ -28,6 +28,7 @@ func (r *Repository) GetRoom(ctx context.Context, roomId string) (Room, error) {
 	fmt.Println("GetRoom")
 	room := Room{}
 	err := r.db.Get(&room, "SELECT `room_id`, `room_name`, `is_public` FROM `rooms` WHERE `room_id` = ?", roomId)
+	fmt.Println("クエリが成功した")
 	if err != nil {
 		fmt.Println("failed to get room:", err)
 		return Room{}, err
