@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"context" // Add the context package
+	"context"
 	"errors"
 	"fmt"
 
@@ -23,7 +23,6 @@ type CreateUserRequest struct {
 var NotEnteredRoomError = errors.New("ルームに入っていません、まず GET /api/room/:roomId/enter")
 
 func (r *Repository) GetUser(ctx context.Context, userId string) (User, error) {
-	fmt.Println("userId: ", userId)
 	var user User
 	err := r.db.Get(&user, "SELECT * FROM users WHERE user_id = ?", userId)
 	if err != nil {
