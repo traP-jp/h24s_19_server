@@ -30,5 +30,5 @@ func (h *Handler) SetupRoutes(api *echo.Group) {
 	api.GET("/debug/users", h.GetUsers)
 
 	// ws API
-	api.GET("/ws/:roomID", h.streamer.ConnectWS)
+	api.GET("/ws", h.streamer.ConnectWS)
 }
