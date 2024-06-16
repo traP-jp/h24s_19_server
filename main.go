@@ -1,6 +1,10 @@
 package main
 
 import (
+	"fmt"
+
+	_ "github.com/go-sql-driver/mysql"
+
 	"h24s_19/internal/handler"
 	"h24s_19/internal/pkg/config"
 	"h24s_19/internal/pkg/streamer"
@@ -22,6 +26,7 @@ func main() {
 	})
 
 	// connect to database
+	fmt.Println(config.MySQL().FormatDSN())
 	db, err := sqlx.Connect("mysql", config.MySQL().FormatDSN())
 	if err != nil {
 		e.Logger.Fatal(err)

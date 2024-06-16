@@ -19,6 +19,7 @@ func (s *Streamer) ConnectWS(c echo.Context) error {
 	roomID := c.Param("roomID")
 	_, err := s.repo.GetRoom(c.Request().Context(), roomID)
 	if err != nil {
+		fmt.Println("room not found")
 		return ErrorRoomNotFound
 	}
 

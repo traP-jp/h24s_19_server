@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context" // Add the context package
+	"fmt"
 
 	"github.com/google/uuid"
 )
@@ -27,6 +28,7 @@ func (r *Repository) GetRoom(ctx context.Context, roomId string) (Room, error) {
 	var room Room
 	err := r.db.Get(&room, "SELECT * FROM rooms WHERE room_id = ?", roomId)
 	if err != nil {
+		fmt.Println("failed to get room:", err)
 		return Room{}, err
 	}
 	return room, nil
