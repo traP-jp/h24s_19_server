@@ -15,6 +15,7 @@ var ErrorUserCookieNotSet = echo.NewHTTPError(http.StatusUnauthorized, "user coo
 var ErrorUserNotFound = echo.NewHTTPError(http.StatusNotFound, "user not found")
 
 func (s *Streamer) ConnectWS(c echo.Context) error {
+	fmt.Println("connectWS")
 	roomID := c.Param("roomID")
 	_, err := s.repo.GetRoom(c.Request().Context(), roomID)
 	if err != nil {
@@ -29,8 +30,9 @@ func (s *Streamer) ConnectWS(c echo.Context) error {
 
 	fmt.Println("userId: ", userId)
 
-	user, error := s.repo.GetUser(c.Request().Context(), userId)
-	if error != nil {
+	user, err := s.repo.GetUser(c.Request().Context(), userId)
+	fmt.Println("user:", user, "err:", err)
+	if err != nil {
 		return ErrorUserNotFound
 	}
 
