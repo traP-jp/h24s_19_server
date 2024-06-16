@@ -27,8 +27,11 @@ func (s *Streamer) ConnectWS(c echo.Context) error {
 		return ErrorRoomNotFound
 	}
 
+	fmt.Println("部屋取れた")
+
 	userIdInCookie, err := c.Cookie("userId")
 	if err != nil {
+		fmt.Println("user cookie not set")
 		return ErrorUserCookieNotSet
 	}
 	userId := userIdInCookie.Value
