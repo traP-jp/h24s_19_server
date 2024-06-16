@@ -26,7 +26,7 @@ type GetRoomsParams struct {
 
 func (r *Repository) GetRoom(ctx context.Context, roomId string) (Room, error) {
 	fmt.Println("GetRoom")
-	var room Room
+	room := Room{}
 	err := r.db.Get(&room, "SELECT * FROM rooms WHERE room_id = ?", roomId)
 	if err != nil {
 		fmt.Println("failed to get room:", err)
