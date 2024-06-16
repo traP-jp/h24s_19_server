@@ -17,7 +17,7 @@ var ErrorUserNotFound = echo.NewHTTPError(http.StatusNotFound, "user not found")
 func (s *Streamer) ConnectWS(c echo.Context) error {
 	fmt.Println("connectWS")
 	roomID, err := c.Cookie("roomID")
-	fmt.Println("roomID: ", roomID)
+	fmt.Println("roomID: ", roomID.Value)
 	_, err = s.repo.GetRoom(c.Request().Context(), roomID.Value)
 	if err != nil {
 		fmt.Println("room not found")
@@ -47,7 +47,7 @@ func (s *Streamer) ConnectWS(c echo.Context) error {
 
 	fmt.Println("3")
 
-	client := newClient(roomID, conn, s.receiver)
+	client := newClient(roomID.Value, conn, s.receiver)
 
 	s.clients[client.id] = client
 	s.clients[client.id].name = user.UserName
