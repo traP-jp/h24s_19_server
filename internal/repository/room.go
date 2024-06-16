@@ -51,7 +51,7 @@ func (r *Repository) CreateRoom(ctx context.Context, params RoomRequest) (Room, 
 		return Room{}, err
 	}
 	_, err = r.db.Exec(
-		"INSERT INTO rooms (room_id, room_name, is_public) VALUES (?, ?, ?)",
+		"INSERT INTO `rooms` (`room_id`, `room_name`, `is_public`) VALUES (?, ?, ?)",
 		roomId,
 		params.RoomName,
 		params.IsPublic,

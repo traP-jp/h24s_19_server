@@ -24,7 +24,7 @@ var NotEnteredRoomError = errors.New("ルームに入っていません、まず
 
 func (r *Repository) GetUser(ctx context.Context, userId string) (User, error) {
 	var user User
-	err := r.db.Get(&user, "SELECT * FROM users WHERE user_id = ?", userId)
+	err := r.db.Get(&user, "SELECT * FROM `users` WHERE `user_id` = ?", userId)
 	if err != nil {
 		if err.Error() == "sql: no rows in result set" {
 			return User{}, NotEnteredRoomError
@@ -38,7 +38,7 @@ func (r *Repository) GetUser(ctx context.Context, userId string) (User, error) {
 
 func (r *Repository) GetUsers(ctx context.Context) ([]User, error) {
 	var users []User
-	err := r.db.Select(&users, "SELECT * FROM users")
+	err := r.db.Select(&users, "SELECT * FROM `users`")
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +63,7 @@ func (r *Repository) CreateUser(ctx context.Context, params CreateUserRequest) (
 		return User{}, err
 	}
 	_, err = r.db.Exec(
-		"INSERT INTO users (user_id, user_name, room_id) VALUES (?, ?, ?)",
+		"INSERT INTO `users` (`user_id`, `user_name`, `room_id`) VALUES (?, ?, ?)",
 		userId,
 		params.UserName,
 		params.RoomId,

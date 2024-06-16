@@ -45,7 +45,7 @@ func addWord(db *sqlx.DB, roomId string, word string, reading string, basic_scor
 	}
 
 	fmt.Println("word: %s, reading: %s, basic_score: %d", word, reading, basic_score)
-	res, err := db.Exec("INSERT INTO words (room_id, word, reading, basic_score) VALUES (?, ?, ?, ?)", roomId, word, reading, basic_score)
+	res, err := db.Exec("INSERT INTO `words` (`room_id`, `word`, `reading`, `basic_score`) VALUES (?, ?, ?, ?)", roomId, word, reading, basic_score)
 	if err != nil {
 		fmt.Println("failed to insert word:", err)
 		return 0, err
@@ -61,7 +61,7 @@ func addWord(db *sqlx.DB, roomId string, word string, reading string, basic_scor
 
 func getLastWordReading(db *sqlx.DB, roomId string) (string, error) {
 	var reading string
-	err := db.Get(&reading, "SELECT reading FROM words WHERE room_id = ? ORDER BY word_id DESC LIMIT 1", roomId)
+	err := db.Get(&reading, "SELECT `reading` FROM `words` WHERE `room_id` = ? ORDER BY `word_id` DESC LIMIT 1", roomId)
 	if err != nil {
 		return "", nil
 	}
