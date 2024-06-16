@@ -62,7 +62,7 @@ func (h *Handler) EnterRoom(c echo.Context) error {
 	}
 
 	if false { // check room password
-		return echo.NewHTTPError(http.StatusBadRequest, repository.NotMatchRoomPasswordError)
+		return echo.NewHTTPError(http.StatusBadRequest, repository.ErrorNotMatchRoomPassword)
 	}
 
 	user, err := h.repo.CreateUser(c.Request().Context(), repository.CreateUserRequest{UserName: params.UserName, RoomId: roomId, RoomPassword: params.RoomPassword})

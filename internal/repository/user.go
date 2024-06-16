@@ -46,11 +46,17 @@ func (r *Repository) GetUsers(ctx context.Context) ([]User, error) {
 	return users, nil
 }
 
-var NotMatchRoomPasswordError = errors.New("パスワードが違います")
+var ErrorRoomNotFound = errors.New("ルームが見つかりません")
+var ErrorNotMatchRoomPassword = errors.New("パスワードが違います")
 
 func (r *Repository) CreateUser(ctx context.Context, params CreateUserRequest) (User, error) {
+	_, err := r.GetRoom(ctx, params.RoomId)
+	if err != nil {
+		return User{}, ErrorRoomNotFound
+	}
+
 	if false { // check room password
-		return User{}, NotMatchRoomPasswordError
+		return User{}, ErrorNotMatchRoomPassword
 	}
 
 	userId, err := uuid.NewUUID()
