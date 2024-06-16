@@ -24,6 +24,19 @@ paths:
   /api/rooms:
     get:
       summary: 全ての部屋一覧を取得
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: number
+            default: 50
+          description: 何件取得するか
+        - name: offset
+          in: query
+          schema:
+            type: number
+            default: 0
+          description: 何件目から取得するか
       responses:
         '200':
           description: OK
@@ -96,24 +109,32 @@ components:
         - roomId
         - roomName
     getRooms:
-      type: array
-      items:
-        type: object
-        properties:
-          roomId:
-            type: string
-          roomName:
-            type: string
-          isPublic:
-            type: boolean
-          userCount:
-            type: integer
-            description: 部屋に入っている人数
-        required:
-          - roomId
-          - roomName
-          - isPublic
-          - userCount
+      type: object
+      properties:
+        rooms:
+          type: array
+          items:
+            type: object
+            properties:
+              roomId:
+                type: string
+              roomName:
+                type: string
+              isPublic:
+                type: boolean
+              userCount:
+                type: integer
+                description: 部屋に入っている人数
+            required:
+              - roomId
+              - roomName
+              - isPublic
+              - userCount
+        hasNext:
+          type: boolean
+      required:
+        - rooms
+        - hasNext
     enterRoom:
       type: object
       properties:
