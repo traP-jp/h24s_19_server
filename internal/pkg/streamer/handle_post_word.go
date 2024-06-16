@@ -33,7 +33,7 @@ type rejectedPostWord struct {
 
 var NotMatchShiritoriError = errors.New("ルール違反")
 
-func addWord(db *sqlx.DB, roomId string, word string, reading string, basic_score int) (int, error) {
+func addWord(db *sqlx.DB, roomId string, userId string, word string, reading string, basic_score int) (int, error) {
 	lastReading, err := getLastWordReading(db, roomId)
 	if err != nil {
 		fmt.Println("failed to get last word:", err)
@@ -45,7 +45,7 @@ func addWord(db *sqlx.DB, roomId string, word string, reading string, basic_scor
 	}
 
 	fmt.Println("word: %s, reading: %s, basic_score: %d", word, reading, basic_score)
-	res, err := db.Exec("INSERT INTO `words` (`room_id`, `word`, `reading`, `basic_score`) VALUES (?, ?, ?, ?)", roomId, word, reading, basic_score)
+	res, err := db.Exec("INSERT INTO words (room_id, user_id, word, reading, basic_score) VALUES (?, ?, ?, ?)", roomId, userId, word, reading, basic_score)
 	if err != nil {
 		fmt.Println("failed to insert word:", err)
 		return 0, err
@@ -61,7 +61,7 @@ func addWord(db *sqlx.DB, roomId string, word string, reading string, basic_scor
 
 func getLastWordReading(db *sqlx.DB, roomId string) (string, error) {
 	var reading string
-	err := db.Get(&reading, "SELECT `reading` FROM `words` WHERE `room_id` = ? ORDER BY `word_id` DESC LIMIT 1", roomId)
+	err := db.Get(&reading, "SELECT reading FROM words WHERE room_id = ? ORDER BY word_id DESC LIMIT 1", roomId)
 	if err != nil {
 		return "", nil
 	}
@@ -70,10 +70,13 @@ func getLastWordReading(db *sqlx.DB, roomId string) (string, error) {
 
 func (s *Streamer) handleInit(db *sqlx.DB, roomId string, clientID uuid.UUID) error {
 	var words []struct {
-		Word    string `db:"word"`
-		Reading string `db:"reading"`
+		WordId     int    `db:"word_id"`
+		Word       string `db:"word"`
+		Reading    string `db:"reading"`
+		UserName   string `db:"user_name"`
+		BasicScore int    `db:"basic_score"`
 	}
-	err := db.Select(&words, "SELECT `word`, `reading` FROM `words` WHERE `room_id` = ? ORDER BY `word_id` LIMIT 10", roomId)
+	err := db.Select(&words, "SELECT `word_id`, `word`, `reading`, `user_name`, `basic_score` FROM `words` WHERE `room_id` = ? ORDER BY `word_id` LIMIT 10", roomId)
 	if err != nil {
 		fmt.Println("failed to get words:", err)
 		return err
@@ -81,9 +84,12 @@ func (s *Streamer) handleInit(db *sqlx.DB, roomId string, clientID uuid.UUID) er
 
 	for _, word := range words {
 		message := postWordResponse{
-			Type:    "posted_word",
-			Word:    word.Word,
-			Reading: word.Reading,
+			Type:       "posted_word",
+			UserName:   word.UserName,
+			WordId:     word.WordId,
+			Word:       word.Word,
+			Reading:    word.Reading,
+			BasicScore: word.BasicScore,
 		}
 		messageBytes, err := json.Marshal(message)
 		if err != nil {
@@ -103,10 +109,11 @@ func (s *Streamer) handlePostWord(db *sqlx.DB, roomId string, clientID uuid.UUID
 		fmt.Println("failed to get last word:", err)
 		return err
 	}
+	userId := s.clients[clientID].name
 	roomIdUuid := uuid.FromStringOrNil(roomId)
 	rune_count, err := s.repo.GetRuneCount(roomIdUuid)
 	basicScore := util.GetScore(lastReading, args.Reading, rune_count)
-	wordId, err := addWord(db, roomId, args.Word, args.Reading, basicScore)
+	wordId, err := addWord(db, roomId, userId, args.Word, args.Reading, basicScore)
 	if err != nil {
 		if err == NotMatchShiritoriError {
 			message := rejectedPostWord{

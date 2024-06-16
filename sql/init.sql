@@ -10,6 +10,7 @@ DROP TABLE IF EXISTS `words`;
 CREATE TABLE `words` (
   `word_id` INTEGER NOT NULL AUTO_INCREMENT,
   `room_id` VARCHAR(36) NOT NULL,
+  `user_id` VARCHAR(36) NOT NULL,
   `word` varchar(30) NOT NULL,
   `reading` varchar(30) NOT NULL,
   `basic_score` INTEGER NOT NULL,
