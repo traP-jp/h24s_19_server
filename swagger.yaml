@@ -114,27 +114,29 @@ components:
         rooms:
           type: array
           items:
-            type: object
-            properties:
-              roomId:
-                type: string
-              roomName:
-                type: string
-              isPublic:
-                type: boolean
-              userCount:
-                type: integer
-                description: 部屋に入っている人数
-            required:
-              - roomId
-              - roomName
-              - isPublic
-              - userCount
+            $ref: "#/components/schemas/room"
         hasNext:
           type: boolean
       required:
         - rooms
         - hasNext
+    room:
+      type: object
+      properties:
+        roomId:
+          type: string
+        roomName:
+          type: string
+        isPublic:
+          type: boolean
+        userCount:
+          type: integer
+          description: 部屋に入っている人数
+      required:
+        - roomId
+        - roomName
+        - isPublic
+        - userCount
     enterRoom:
       type: object
       properties:
