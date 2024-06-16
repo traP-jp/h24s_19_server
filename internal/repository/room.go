@@ -7,9 +7,9 @@ import (
 )
 
 type Room struct {
-	RoomId   uuid.UUID `db:"room_id"`
-	RoomName string    `db:"room_name"`
-	IsPublic bool      `db:"is_public"`
+	RoomId   uuid.UUID `db:"room_id" json:"roomId"`
+	RoomName string    `db:"room_name" json:"roomName"`
+	IsPublic bool      `db:"is_public" json:"isPublic"`
 }
 
 type RoomRequest struct {

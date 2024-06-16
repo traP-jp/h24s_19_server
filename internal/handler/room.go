@@ -15,8 +15,8 @@ type Room struct {
 }
 
 type RoomRequest struct {
-	RoomName string `json:"room_name"`
-	IsPublic bool   `json:"is_public"`
+	IsPublic bool   `json:"isPublic"`
+	RoomName string `json:"roomName"`
 	Password string `json:"password"`
 }
 
@@ -39,4 +39,3 @@ func (h *Handler) CreateRoom(c echo.Context) error {
 	}
 	return c.JSON(http.StatusCreated, room)
 }
-
