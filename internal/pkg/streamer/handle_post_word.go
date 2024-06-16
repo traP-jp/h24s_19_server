@@ -33,7 +33,7 @@ type rejectedPostWord struct {
 
 var NotMatchShiritoriError = errors.New("ルール違反")
 
-func addWord(db *sqlx.DB, roomId string, userId string, word string, reading string, basic_score int) (int, error) {
+func addWord(db *sqlx.DB, roomId string, userName string, word string, reading string, basic_score int) (int, error) {
 	lastReading, err := getLastWordReading(db, roomId)
 	if err != nil {
 		fmt.Println("failed to get last word:", err)
@@ -45,7 +45,7 @@ func addWord(db *sqlx.DB, roomId string, userId string, word string, reading str
 	}
 
 	fmt.Println("word: %s, reading: %s, basic_score: %d", word, reading, basic_score)
-	res, err := db.Exec("INSERT INTO words (room_id, user_id, word, reading, basic_score) VALUES (?, ?, ?, ?)", roomId, userId, word, reading, basic_score)
+	res, err := db.Exec("INSERT INTO words (room_id, user_name, word, reading, basic_score) VALUES (?, ?, ?, ?, ?)", roomId, userName, word, reading, basic_score)
 	if err != nil {
 		fmt.Println("failed to insert word:", err)
 		return 0, err
@@ -109,11 +109,11 @@ func (s *Streamer) handlePostWord(db *sqlx.DB, roomId string, clientID uuid.UUID
 		fmt.Println("failed to get last word:", err)
 		return err
 	}
-	userId := s.clients[clientID].name
+	userName := s.clients[clientID].name
 	roomIdUuid := uuid.FromStringOrNil(roomId)
 	rune_count, err := s.repo.GetRuneCount(roomIdUuid)
 	basicScore := util.GetScore(lastReading, args.Reading, rune_count)
-	wordId, err := addWord(db, roomId, userId, args.Word, args.Reading, basicScore)
+	wordId, err := addWord(db, roomId, userName, args.Word, args.Reading, basicScore)
 	if err != nil {
 		if err == NotMatchShiritoriError {
 			message := rejectedPostWord{
