@@ -1,6 +1,12 @@
 package util
 
-import ()
+import "strings"
+
+//import "github.com/google/uuid"
+
+func CountRunes(s string) int {
+	return len([]rune(s))
+}
 
 func GetFirstRune(s string) rune {
 	if len(s) == 0 {
@@ -13,7 +19,7 @@ func GetLastRune(s string) rune {
 	if len(s) == 0 {
 		return rune(0)
 	}
-	return []rune(s)[len(s)-1]
+	return []rune(s)[CountRunes(s)-1]
 }
 
 var vowel = map[rune]rune{
@@ -26,4 +32,41 @@ func Getvowel(s rune) rune {
 		return s
 	}
 	return v
+}
+
+func GetLastValidRune(s string) rune {
+	runes := []rune(s)
+	if len(s) == 0 {
+		return rune(0)
+	}
+	if strings.Contains("ゃゅょっ", string(runes[len(runes)-1])) {
+		return runes[len([]rune(s))-2]
+	}
+	return runes[len([]rune(s))-1]
+}
+
+func IsValid(s string) bool {
+	if len(s) == 0 {
+		return false
+	}
+	if strings.Contains("ゃゅょっ", string(GetFirstRune(s))) {
+		return false
+	}
+	return true
+}
+
+func SiritoriCheck(lastReading, currentReading string) bool {
+	return GetLastValidRune(lastReading) == GetFirstRune(currentReading)
+}
+
+func Insert(s string, index int, value string) string {
+	return string([]rune(s)[:index]) + value + string([]rune(s)[index:])
+}
+
+func Count(s string) map[rune]int {
+	m := make(map[rune]int)
+	for _, r := range s {
+		m[r]++
+	}
+	return m
 }
