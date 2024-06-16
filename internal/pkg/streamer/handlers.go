@@ -21,7 +21,7 @@ func (s *Streamer) handleWebSocket(db *sqlx.DB, data receiveData) error {
 	}
 
 	switch req.Type {
-	case "post_word":
+	case "postWord":
 		var args postWordArgs
 		err = json.Unmarshal(req.Args, &args)
 		if err != nil {
